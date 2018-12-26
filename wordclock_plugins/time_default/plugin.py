@@ -67,26 +67,30 @@ class plugin:
             print('  No typewriter_speed set for default plugin within the config-file. Defaulting to ' + str(
                 self.typewriter_speed) + '.')
 
-        self.bg_color = wcc.BLACK  # default background color
-        self.word_color = wcc.WWHITE  # default word color
-        self.minute_color = wcc.WWHITE  # default minute color
+        self.bg_color  = wcc.BLACK  # default background color
+        self.minute_color  =  wcc.Color(0,72,255) # default word color
+        self.word_color =  wcc.Color(255,43,0) # default minute color
+
+        # Vfl Schriftzug
+        self.vfl_bild = [0,2,11,13,22,24,34,38,39,48,58,59,60,70,74,81,85,96,107,108,109]
+        self.vfl_farbe = wcc.Color(0,92,169)
 
         # Other color modes...
         self.color_modes = \
-            [[wcc.BLACK, wcc.WWHITE, wcc.WWHITE],
-             [wcc.BLACK, wcc.WHITE, wcc.WHITE],
-             [wcc.BLACK, wcc.ORANGE, wcc.ORANGE],
-             [wcc.BLACK, wcc.ORANGE, wcc.WWHITE],
-             [wcc.BLACK, wcc.PINK, wcc.GREEN],
-             [wcc.BLACK, wcc.RED, wcc.YELLOW],
-             [wcc.BLACK, wcc.BLUE, wcc.RED],
-             [wcc.BLACK, wcc.RED, wcc.BLUE],
-             [wcc.YELLOW, wcc.RED, wcc.BLUE],
-             [wcc.RED, wcc.BLUE, wcc.BLUE],
-             [wcc.RED, wcc.WHITE, wcc.WHITE],
-             [wcc.GREEN, wcc.YELLOW, wcc.PINK],
-             [wcc.WWHITE, wcc.BLACK, wcc.BLACK],
-             [wcc.BLACK, wcc.Color(30, 30, 30), wcc.Color(30, 30, 30)]]
+           [[wcc.BLACK, wcc.WWHITE, wcc.WWHITE],
+            [wcc.BLACK, wcc.ORANGE, wcc.ORANGE],
+            [wcc.BLACK, wcc.Color(0,100,0), wcc.Color(0,100,0)],
+            [wcc.BLACK, wcc.Color(79,0,100), wcc.Color(79,0,100)],
+            [wcc.BLACK, wcc.Color(100,0,0), wcc.Color(100,0,0)],
+            [wcc.BLACK, wcc.ORANGE, wcc.WWHITE],
+            [wcc.BLACK, wcc.PINK, wcc.GREEN],
+            [wcc.BLACK, wcc.RED, wcc.RED],
+            [wcc.BLACK, wcc.BLUE, wcc.RED],
+            [wcc.BLACK, wcc.RED, wcc.BLUE],
+            [wcc.BLACK, wcc.BLUE, wcc.BLUE],
+            [wcc.BLACK, wcc.WHITE, wcc.WHITE],
+            [wcc.BLACK, wcc.WHITE, wcc.WHITE],
+            [wcc.BLACK, wcc.YELLOW, wcc.PINK]]
         self.color_mode_pos = 0
         self.rb_pos = 0  # index position for "rainbow"-mode
         try:
@@ -109,8 +113,17 @@ class plugin:
             now = datetime.datetime.now()
             # Check, if a minute has passed (to render the new time)
             if prev_min < now.minute:
-                # Set background color
-                self.show_time(wcd, wci)
+                # um 19:04 Schalke-Logo zeigen, um 18:48 Vfl Bochum Schriftzug
+                if now.hour == 19 and now.minute == 04:
+                    wcd.resetDisplay()
+                    wcd.showIcon('time_default', iconName='04V4')
+                elif now.hour == 18 and now.minute == 48:
+                    wcd.resetDisplay()
+                    wcd.setColorBy1DCoordinates(wcd.strip, self.vfl_bild, self.vfl_farbe)
+                    wcd.show()
+                else:
+                    # Set background color
+                    self.show_time(wcd, wci)
                 prev_min = -1 if now.minute == 59 else now.minute
             event = wci.waitForEvent(2)
             # Switch display color, if button_left is pressed
